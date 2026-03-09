@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Kain & Guto Video Vault</title>
+<style>
+body{
+font-family: Arial;
+background:#111;
+color:white;
+text-align:center;
+}
+
+#login,#app{
+margin-top:100px;
+}
+
+button{
+padding:10px 20px;
+margin:10px;
+font-size:16px;
+}
+
+video{
+width:400px;
+display:block;
+margin:20px auto;
+}
+</style>
+</head>
+
+<body>
+
+<div id="login">
+<h1>Video Vault</h1>
+<p>Who are you?</p>
+
+<button onclick="setUser('kain')">Kain</button>
+<button onclick="setUser('guto')">Guto</button>
+
+<div id="passArea" style="display:none;">
+<p>Password:</p>
+<input type="password" id="pass">
+<br>
+<button onclick="login()">Enter</button>
+</div>
+</div>
+
+<div id="app" style="display:none;">
+
+<h2 id="welcome"></h2>
+
+<input type="file" id="videoUpload" accept="video/*">
+<button onclick="uploadVideo()">Add Video</button>
+
+<h3>Videos</h3>
+<div id="videos"></div>
+
+</div>
+
+<script>
+
+let currentUser=null
+let password="kkgg"
+
+function setUser(user){
+currentUser=user
+document.getElementById("passArea").style.display="block"
+}
+
+function login(){
+
+let pass=document.getElementById("pass").value
+
+if(pass===password){
+
+document.getElementById("login").style.display="none"
+document.getElementById("app").style.display="block"
+
+document.getElementById("welcome").innerText="Welcome "+currentUser
+
+loadVideos()
+
+}else{
+alert("Wrong password")
+}
+
+}
+
+function uploadVideo(){
+
+let file=document.getElementById("videoUpload").files[0]
+
+if(!file) return
+
+let reader=new FileReader()
+
+reader.onload=function(e){
+
+let videos=JSON.parse(localStorage.getItem("videos")||"[]")
+
+videos.push(e.target.result)
+
+localStorage.setItem("videos",JSON.stringify(videos))
+
+loadVideos()
+
+}
+
+reader.readAsDataURL(file)
+
+}
+
+function loadVideos(){
+
+let container=document.getElementById("videos")
+container.innerHTML=""
+
+let videos=JSON.parse(localStorage.getItem("videos")||"[]")
+
+videos.forEach(v=>{
+
+let vid=document.createElement("video")
+vid.src=v
+vid.controls=true
+
+container.appendChild(vid)
+
+})
+
+}
+
+</script>
+
+</body>
+</html>
